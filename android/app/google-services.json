@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "51474917081",
+    "project_id": "bytechat-4b0d9",
+    "storage_bucket": "bytechat-4b0d9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:51474917081:android:791be8cdd2cd52ad1b40c8",
+        "android_client_info": {
+          "package_name": "com.bytechat.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbJ-eYG43n3i5n_e938D-NRVFdr_Eq6Tg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -27,15 +27,18 @@ jobs:
       - name: 4. Instalando dependências do projeto
         run: flutter pub get
 
-      # AQUI ESTÁ A GRANDE MUDANÇA:
-      # Usamos o comando nativo do Gradle para compilar, ignorando o bug do Flutter.
-      - name: 5. Compilando o APK via Gradle
-        run: cd android && ./gradlew assembleRelease
+      # AQUI ESTÁ A CORREÇÃO FINALÍSSIMA:
+      # Damos permissão de execução para o script do Gradle.
+      - name: 5. Dar permissão de execução ao Gradlew
+        run: chmod +x android/gradlew
 
-      # O passo de upload também foi corrigido para o caminho que o Gradle usa.
-      - name: 6. Salvando o APK gerado
+      # Agora o comando de compilação vai funcionar.
+      - name: 6. Compilando o APK via Gradle
+        working-directory: ./android
+        run: ./gradlew assembleRelease
+
+      - name: 7. Salvando o APK gerado
         uses: actions/upload-artifact@v4
         with:
           name: ByteChat-release-armv7
-          # Caminho correto para o APK gerado pelo Gradle com a configuração 'splits'.
           path: android/app/build/outputs/apk/release/app-armeabi-v7a-release.apk

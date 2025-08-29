@@ -40,7 +40,7 @@ class DefaultFirebaseOptions {
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDbJ-eYG43n3i5n_e938D-NRVFdr_Eq6Tg',
     appId: '1:51474917081:android:791be8cdd2cd52ad1b40c8',
-    messagingSenderId: 'SEU_MESSAGING_SENDER_ID_AQUI',
+    messagingSenderId: '51474917081',
     projectId: 'bytechat-4b0d9',
     storageBucket: 'bytechat-4b0d9.firebasestorage.app',
   );

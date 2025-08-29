@@ -1,5 +1,5 @@
 name: bytechat
-description: "Um aplicativo de chat em tempo real construído com Flutter e Supabase."
+description: "Um protótipo de chat em tempo real com Flutter, Supabase e Firebase."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -10,18 +10,12 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Dependências do Firebase que já tínhamos
-  firebase_core: ^3.1.1
-  firebase_messaging: ^15.0.2
-
-  # NOVAS DEPENDÊNCIAS ADICIONADAS CONFORME O ERRO
-  cloud_firestore: ^5.0.1
-  firebase_auth: ^5.1.0
-  intl: ^0.19.0 # Pacote para formatação de datas
-  
-  # O Supabase não está sendo usado neste novo código, mas podemos deixar aqui por enquanto.
+  # Essencial para o Supabase
   supabase_flutter: ^2.5.0
 
+  # Essencial para o Firebase (Core e Messaging para futuras notificações)
+  firebase_core: ^3.1.1
+  firebase_messaging: ^15.0.2
 
 dev_dependencies:
   flutter_test:

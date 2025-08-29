@@ -20,14 +20,14 @@ jobs:
       - name: 3. Configurando o Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.0'
+          # AQUI ESTÁ A CORREÇÃO: Atualizamos para uma versão mais recente.
+          flutter-version: '3.22.2' 
           channel: 'stable'
           cache: true
 
       - name: 4. Instalando dependências do projeto
         run: flutter pub get
 
-      # AQUI ESTÁ A CORREÇÃO: Adicionamos --no-watcher para evitar o bug.
       - name: 5. Compilando o APK
         run: flutter build apk --release --no-watcher
 
@@ -35,5 +35,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ByteChat-release
-          # O caminho para o APK de release é um pouco diferente
           path: build/app/outputs/flutter-apk/app-release.apk

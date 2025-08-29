@@ -42,6 +42,6 @@ class DefaultFirebaseOptions {
     appId: '1:51474917081:android:791be8cdd2cd52ad1b40c8',
     messagingSenderId: 'SEU_MESSAGING_SENDER_ID_AQUI',
     projectId: 'SEU_PROJECT_ID_AQUI',
-    storageBucket: 'SEU_STORAGE_BUCKET_AQUI',
+    storageBucket: 'bytechat-4b0d9.firebasestorage.app',
   );
 }

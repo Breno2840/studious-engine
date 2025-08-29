@@ -1,6 +1,7 @@
-import 'package.flutter/material.dart';
-import 'package.supabase_flutter/supabase_flutter.dart';
-import 'package.firebase_core/firebase_core.dart';
+// IMPORTS CORRIGIDOS (usando 'package:' corretamente)
+import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -40,43 +41,35 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _textController = TextEditingController();
-  final _messagesStream = supabase.from('messages').stream(primaryKey: ['id']).order('created_at', ascending: false);
+  // Corrigido para ordem ascendente para o chat ficar na ordem normal
+  final _messagesStream = supabase.from('messages').stream(primaryKey: ['id']).order('created_at', ascending: true);
 
-  // ========= AQUI ESTÁ A ÚNICA MUDANÇA =========
   Future<void> _sendMessage() async {
     final text = _textController.text.trim();
     if (text.isEmpty) {
-      return; // Se não tiver texto, não faz nada.
+      return;
     }
 
     _textController.clear();
 
     try {
-      // Tenta inserir a mensagem no Supabase
       await supabase.from('messages').insert({
         'content': text,
         'username': 'Breno',
       });
 
-      // Se o código chegou até aqui, o envio foi um SUCESSO.
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Mensagem enviada com sucesso!"),
-          backgroundColor: Colors.green,
-        ));
+        // Removi o SnackBar de sucesso para não poluir a tela
       }
     } catch (error) {
-      // Se deu algum erro, o código entra aqui.
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          // Mostramos o erro EXATO na tela.
           content: Text("ERRO: ${error.toString()}"),
           backgroundColor: Colors.red,
         ));
       }
     }
   }
-  // ========= FIM DA MUDANÇA =========
 
   @override
   void dispose() {
@@ -99,22 +92,20 @@ class _ChatPageState extends State<ChatPage> {
                 if (snapshot.hasError) {
                   return Center(child: Text('Erro ao carregar mensagens: ${snapshot.error}'));
                 }
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final messages = snapshot.data!;
-                if (messages.isEmpty) {
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const Center(child: Text('Nenhuma mensagem ainda.'));
                 }
+                
+                final messages = snapshot.data!;
 
                 return ListView.builder(
-                  reverse: true,
+                  // Removido o 'reverse' para a ordem normal de chat (mensagens novas embaixo)
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     final message = messages[index];
                     return ListTile(
-                      title: Text(message['username'] ?? 'Anônimo', style: const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text(message['content']),
+                      title: Text(message['username'] ?? 'Anônimo', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blueAccent)),
+                      subtitle: Text(message['content'], style: const TextStyle(fontSize: 16)),
                     );
                   },
                 );

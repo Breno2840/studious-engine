@@ -1,145 +1,66 @@
-// Based on https://dartpad.dev/?id=d57c6c898dabb8c6fb41018588b8cf73
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+// Importa o arquivo de configuração do Firebase que acabamos de corrigir
 import 'firebase_options.dart';
 
-const Color darkBlue = Color.fromARGB(255, 18, 32, 47);
+Future<void> main() async {
+  // Garante que o Flutter esteja pronto
+  WidgetsFlutterBinding.ensureInitialized();
 
-const messageLimit = 30;
-
-void main() async {
-  try {
-    WidgetsFlutterBinding.ensureInitialized();
-  } catch (e, st) {
-    print(e);
-    print(st);
-  }
-
-  // The first step to using Firebase is to configure it so that our code can
-  // find the Firebase project on the servers. This is not a security risk, as
-  // explained here: https://stackoverflow.com/a/37484053
+  // INICIALIZAÇÃO CORRETA E MODERNA DO FIREBASE
+  // Usamos o arquivo firebase_options.dart para garantir que as chaves certas sejam usadas.
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // We sign the user in anonymously, meaning they get a user ID without having
-  // to provide credentials. While this doesn't allow us to identify the user,
-  // this would, for example, still allow us to associate data in the database
-  // with each user.
-  await FirebaseAuth.instance.signInAnonymously();
+  // Inicialização do Supabase (continua igual)
+  await Supabase.initialize(
+    url: 'https://vkmzoznmzgxfzvgdlwvm.supabase.co',
+    anonKey: 'eyJhbGciOiJIANiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrbXpvem5temd4Znp2Z2Rsd3ZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MDcwNzIsImV4cCI6MjA3MTI4MzA3Mn0.Rm1f2YJPjdyom2xa5QaB4Iewr0cOhCq08ObdRJk27vg',
+  );
 
-  runApp(MyApp());
+  runApp(const ByteChatMiniApp());
 }
 
-class MyApp extends StatelessWidget {
-  final DateFormat formatter = DateFormat('MM/dd HH:mm:SS');
-
-  MyApp({Key? key}) : super(key: key);
+class ByteChatMiniApp extends StatelessWidget {
+  const ByteChatMiniApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // The user can send a message to Firebase. What they can send is
-              // protected by server-side security rules, which in this case
-              // only allow chat messages that this regular expression:
-              //
-              //    ^((?i)hello|\\s|firebase|welcome|to|summit|the|this|
-              //    everyone|good|morning|afternoon|firestore|meetup|
-              //    devfest|virtual|online)+
-              //
-              // In a real project you'd probably expand that, for example by
-              // only allowing users that you explicitly approve to post
-              // messages.
-              const SizedBox(height: 32),
-              Text(
-                'Enter a new message',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'You can type a message into this field and hit the enter key '
-                'to add it to the stream. The security rules for the '
-                'Firestore database only allow certain words, though! Check '
-                'the comments in the code to the left for details.',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 16),
-              FractionallySizedBox(
-                widthFactor: 0.5,
-                child: TextField(
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Enter your message and hit Enter'),
-                  onSubmitted: (String value) {
-                    FirebaseFirestore.instance.collection('chat').add(
-                      {
-                        'message': value,
-                        'timestamp': DateTime.now().millisecondsSinceEpoch
-                      },
-                    );
-                  },
-                ),
-              ),
-              // We use a stream builder to both read the initial data from the
-              // database and listen to updates to that data in realtime. The
-              // database we use is called Firestore, and we are asking the 10
-              // most recent messages.
-              const SizedBox(height: 32),
-              Text(
-                'The latest messages',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('chat')
-                      .orderBy('timestamp', descending: true)
-                      .limit(messageLimit)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Center(child: Text('$snapshot.error'));
-                    } else if (!snapshot.hasData) {
-                      return const Center(
-                        child: SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    }
+      debugShowCheckedModeBanner: false,
+      title: 'ByteChat Mini',
+      theme: ThemeData.dark(),
+      home: const ProofOfConceptPage(),
+    );
+  }
+}
 
-                    var docs = snapshot.data!.docs;
+// TELA DE TESTE PARA PROVAR QUE TUDO FUNCIONOU
+class ProofOfConceptPage extends StatelessWidget {
+  const ProofOfConceptPage({super.key});
 
-                    return ListView.builder(
-                      itemCount: docs.length,
-                      itemBuilder: (context, i) {
-                        return ListTile(
-                          leading: DefaultTextStyle.merge(
-                            style: const TextStyle(color: Colors.indigo),
-                            child: Text(formatter.format(
-                                DateTime.fromMillisecondsSinceEpoch(
-                                    docs[i]['timestamp']))),
-                          ),
-                          title: Text('${docs[i]['message']}'),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('ByteChat - Teste de Configuração'),
+      ),
+      body: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.check_circle, color: Colors.green, size: 80),
+            SizedBox(height: 16),
+            Text(
+              'Sucesso!',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text('Supabase e Firebase inicializados corretamente!'),
+          ],
         ),
       ),
     );

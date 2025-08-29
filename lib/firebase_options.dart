@@ -38,7 +38,7 @@ class DefaultFirebaseOptions {
   // ==== COLE SUAS CONFIGURAÇÕES REAIS DO ANDROID AQUI ====
   // Pegue estes valores do seu arquivo google-services.json
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'SUA_API_KEY_AQUI',
+    apiKey: 'AIzaSyDbJ-eYG43n3i5n_e938D-NRVFdr_Eq6Tg',
     appId: 'SEU_APP_ID_AQUI',
     messagingSenderId: 'SEU_MESSAGING_SENDER_ID_AQUI',
     projectId: 'SEU_PROJECT_ID_AQUI',

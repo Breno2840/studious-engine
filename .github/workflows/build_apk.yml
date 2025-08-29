@@ -27,17 +27,18 @@ jobs:
       - name: 4. Instalando dependências do projeto
         run: flutter pub get
 
-      # AQUI ESTÁ A CORREÇÃO FINALÍSSIMA:
-      # Damos permissão de execução para o script do Gradle.
       - name: 5. Dar permissão de execução ao Gradlew
         run: chmod +x android/gradlew
 
-      # Agora o comando de compilação vai funcionar.
       - name: 6. Compilando o APK via Gradle
         working-directory: ./android
         run: ./gradlew assembleRelease
 
-      - name: 7. Salvando o APK gerado
+      # PASSO DE INVESTIGAÇÃO FINAL: VAMOS VER O QUE FOI CRIADO
+      - name: 7. Verificando o local exato do APK gerado
+        run: ls -R android/app/build/outputs/apk/
+
+      - name: 8. Salvando o APK gerado
         uses: actions/upload-artifact@v4
         with:
           name: ByteChat-release-armv7

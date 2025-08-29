@@ -1,4 +1,4 @@
-name: Build do ByteChat
+name: Build do ByteChat com Gradle
 
 on:
   push:
@@ -20,19 +20,22 @@ jobs:
       - name: 3. Configurando o Flutter
         uses: subosito/flutter-action@v2
         with:
-          # AQUI ESTÁ A CORREÇÃO: Atualizamos para uma versão mais recente.
-          flutter-version: '3.22.2' 
+          flutter-version: '3.22.2'
           channel: 'stable'
           cache: true
 
       - name: 4. Instalando dependências do projeto
         run: flutter pub get
 
-      - name: 5. Compilando o APK
-        run: flutter build apk --release --no-watcher
+      # AQUI ESTÁ A GRANDE MUDANÇA:
+      # Usamos o comando nativo do Gradle para compilar, ignorando o bug do Flutter.
+      - name: 5. Compilando o APK via Gradle
+        run: cd android && ./gradlew assembleRelease
 
+      # O passo de upload também foi corrigido para o caminho que o Gradle usa.
       - name: 6. Salvando o APK gerado
         uses: actions/upload-artifact@v4
         with:
-          name: ByteChat-release
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: ByteChat-release-armv7
+          # Caminho correto para o APK gerado pelo Gradle com a configuração 'splits'.
+          path: android/app/build/outputs/apk/release/app-armeabi-v7a-release.apk

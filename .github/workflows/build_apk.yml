@@ -34,12 +34,10 @@ jobs:
         working-directory: ./android
         run: ./gradlew assembleRelease
 
-      # PASSO DE INVESTIGAÇÃO FINAL: VAMOS VER O QUE FOI CRIADO
-      - name: 7. Verificando o local exato do APK gerado
-        run: ls -R android/app/build/outputs/apk/
-
-      - name: 8. Salvando o APK gerado
+      - name: 7. Salvando o APK gerado
         uses: actions/upload-artifact@v4
         with:
           name: ByteChat-release-armv7
-          path: android/app/build/outputs/apk/release/app-armeabi-v7a-release.apk
+          # AQUI ESTÁ A CORREÇÃO FINALÍSSIMA:
+          # Usamos o nome exato que o log nos mostrou.
+          path: android/app/build/outputs/apk/release/app-release.apk

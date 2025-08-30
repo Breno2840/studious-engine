@@ -1,4 +1,4 @@
-import 'package.flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -51,7 +51,7 @@ class _ChatPageState extends State<ChatPage> {
     try {
       await supabase.from('messages').insert({
         'message': text,
-        'username': 'Breno', // Nome fixo para nosso teste
+        'username': 'Breno',
       });
     } catch (error) {
       if (mounted) {

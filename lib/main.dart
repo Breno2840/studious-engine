@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'pages/chat_page.dart'; // Importa nossa nova página de chat
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,8 +16,6 @@ Future<void> main() async {
   runApp(const ByteChatMiniApp());
 }
 
-final supabase = Supabase.instance.client;
-
 class ByteChatMiniApp extends StatelessWidget {
   const ByteChatMiniApp({super.key});
 
@@ -24,105 +23,9 @@ class ByteChatMiniApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'ByteChat Mini',
+      title: 'ByteChat',
       theme: ThemeData.dark(),
-      home: const ChatPage(),
-    );
-  }
-}
-
-class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
-
-  @override
-  State<ChatPage> createState() => _ChatPageState();
-}
-
-class _ChatPageState extends State<ChatPage> {
-  final TextEditingController _textController = TextEditingController();
-  final _messagesStream = supabase.from('messages').stream(primaryKey: ['id']).order('created_at', ascending: true);
-
-  Future<void> _sendMessage() async {
-    final text = _textController.text.trim();
-    if (text.isEmpty) {
-      return;
-    }
-    _textController.clear();
-    try {
-      await supabase.from('messages').insert({
-        'message': text, // <-- CORREÇÃO 1
-        'username': 'Breno',
-      });
-    } catch (error) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("ERRO: ${error.toString()}"),
-          backgroundColor: Colors.red,
-        ));
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('ByteChat Mini (Supabase)'),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: StreamBuilder<List<Map<String, dynamic>>>(
-              stream: _messagesStream,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(child: Text('Erro ao carregar mensagens: ${snapshot.error}'));
-                }
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('Nenhuma mensagem ainda.'));
-                }
-                final messages = snapshot.data!;
-                return ListView.builder(
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    final message = messages[index];
-                    return ListTile(
-                      title: Text(message['username'] ?? 'Anônimo', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blueAccent)),
-                      subtitle: Text(message['message'], style: const TextStyle(fontSize: 16)), // <-- CORREÇÃO 2
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: _textController,
-                    decoration: const InputDecoration(
-                      hintText: 'Digite uma mensagem...',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: _sendMessage,
-                  icon: const Icon(Icons.send),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      home: const ChatPage(), // A tela inicial agora é a ChatPage
     );
   }
 }

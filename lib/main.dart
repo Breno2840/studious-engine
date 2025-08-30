@@ -1,4 +1,3 @@
-// IMPORTS CORRIGIDOS (usando 'package:' corretamente)
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -41,7 +40,6 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _textController = TextEditingController();
-  // Corrigido para ordem ascendente para o chat ficar na ordem normal
   final _messagesStream = supabase.from('messages').stream(primaryKey: ['id']).order('created_at', ascending: true);
 
   Future<void> _sendMessage() async {
@@ -49,18 +47,12 @@ class _ChatPageState extends State<ChatPage> {
     if (text.isEmpty) {
       return;
     }
-
     _textController.clear();
-
     try {
       await supabase.from('messages').insert({
-        'content': text,
+        'message': text, // <-- CORREÇÃO 1
         'username': 'Breno',
       });
-
-      if (mounted) {
-        // Removi o SnackBar de sucesso para não poluir a tela
-      }
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -95,17 +87,14 @@ class _ChatPageState extends State<ChatPage> {
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const Center(child: Text('Nenhuma mensagem ainda.'));
                 }
-                
                 final messages = snapshot.data!;
-
                 return ListView.builder(
-                  // Removido o 'reverse' para a ordem normal de chat (mensagens novas embaixo)
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     final message = messages[index];
                     return ListTile(
                       title: Text(message['username'] ?? 'Anônimo', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blueAccent)),
-                      subtitle: Text(message['content'], style: const TextStyle(fontSize: 16)),
+                      subtitle: Text(message['message'], style: const TextStyle(fontSize: 16)), // <-- CORREÇÃO 2
                     );
                   },
                 );
